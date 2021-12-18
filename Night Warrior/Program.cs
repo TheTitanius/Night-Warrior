@@ -14,7 +14,7 @@ namespace Night_Warrior {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form());
+            Application.Run(new MainMenuForm());
         }
     }
 }
