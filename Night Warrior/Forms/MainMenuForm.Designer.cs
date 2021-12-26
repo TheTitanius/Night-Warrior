@@ -24,53 +24,35 @@ namespace Night_Warrior {
         ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainMenuForm));
-            this.exit = new System.Windows.Forms.PictureBox();
-            this.menuFon = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.exit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.menuFon)).BeginInit();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.examinationTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
-            // 
-            // exit
-            // 
-            this.exit.BackColor = System.Drawing.Color.Transparent;
-            this.exit.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.exit.Image = ((System.Drawing.Image)(resources.GetObject("exit.Image")));
-            this.exit.Location = new System.Drawing.Point(0, 0);
-            this.exit.Name = "exit";
-            this.exit.Size = new System.Drawing.Size(400, 130);
-            this.exit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.exit.TabIndex = 0;
-            this.exit.TabStop = false;
-            this.exit.Click += new System.EventHandler(this.exit_Click);
-            this.exit.MouseLeave += new System.EventHandler(this.Exit_MouseLeave);
-            this.exit.MouseHover += new System.EventHandler(this.exit_MouseHover);
-            // 
-            // menuFon
-            // 
-            this.menuFon.Location = new System.Drawing.Point(0, 0);
-            this.menuFon.Name = "menuFon";
-            this.menuFon.Size = new System.Drawing.Size(100, 50);
-            this.menuFon.TabIndex = 0;
-            this.menuFon.TabStop = false;
             // 
             // MainMenuForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1920, 1080);
+            this.ControlBox = false;
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Controls.Add(this.menuFon);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainMenuForm";
             this.Text = "Night Warrior";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.exit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.menuFon)).EndInit();
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainMenuForm_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainMenuForm_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainMenuForm_KeyUp);
             this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer examinationTimer;
     }
 }
 

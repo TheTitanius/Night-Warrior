@@ -1,64 +1,89 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Night_Warrior.TheScene;
 
 namespace Night_Warrior {
     public partial class MainMenuForm : Form {
-        private Timer timer;
-        private PictureBox exit;
-        private PictureBox menuFon;
-        private bool first = true;
-        private int cadr = 1;
+        private bool isADown = false;
+        private bool isDDown = false;
+        private bool isSpaceDown = false;
+        private TestLevel testLevel;
         public MainMenuForm() {
             InitializeComponent();
-            exit.Location = new Point(Width / 2 - exit.Width/2, Height/2 - exit.Height/2);
-        }
-        private void GlControl1_Loaded(object sender, EventArgs e) {
-        }
-        private void GlControl1_Paint(object sender, PaintEventArgs e) {
-        }
-        private void GlControl1_Click(object sender, EventArgs e) {
+            timer1 = new Timer();
+            timer1.Interval = 33;
+            timer1.Tick += new EventHandler(Update);
+
+            examinationTimer = new Timer();
+            examinationTimer.Interval = 1;
+            examinationTimer.Tick += new EventHandler(Examination);
+
+            TestLevel.CreateTestLevel();
+            testLevel = TestLevel.GetTestLevel();
         }
         private void Form_Load(object sender, EventArgs e) {
-
+            timer1.Start();
+            examinationTimer.Start();
         }
-        private void exit_Click(object sender, EventArgs e) {
-            Close();
+        public void Examination(object sender, EventArgs e) {
+            testLevel.Examination();
         }
-        private void menuFon_Click(object sender, EventArgs e) {
-
-        }
-        private void exit_MouseHover(object sender, EventArgs e) {
-            timer = new Timer();
-            if (first) {
-                timer.Interval = 150;
-                timer.Tick += new EventHandler(Timer_Tick);
-                timer.Start();
+        public void Update(object sender, EventArgs e) {
+            testLevel.Drop();
+            if (isADown) {
+                testLevel.MoveLeft();
             }
-        }
-        private void Timer_Tick(object Sender, EventArgs e) {
-            exit.Image = Image.FromFile(@$"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\exit_{cadr}.png");
-            cadr++;
-            if(cadr == 6) {
-                first = false;
-                cadr = 1;
-                timer.Stop();
+            if (isDDown) {
+                testLevel.MoveReight();
             }
-        }
-        private void Exit_MouseLeave(object sender, EventArgs e) {
-            first = true;
-            exit.Image = Image.FromFile(@"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\exit_5.png");
+            if (isSpaceDown) {
+                testLevel.Jump();
+            }
+            Invalidate();
         }
         protected override void OnPaintBackground(PaintEventArgs e) {
             base.OnPaintBackground(e);
-            menuFon.Image = Image.FromFile(@"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\menu_fon1.gif");
-            menuFon.Location = new Point(0, 0);
-            menuFon.Name = "menuFon";
-            menuFon.Size = new Size(1920, 1080);
-            menuFon.SizeMode = PictureBoxSizeMode.AutoSize;
-            menuFon.TabIndex = 0;
-            menuFon.TabStop = false;
-            menuFon.Controls.Add(exit);
+            testLevel.SetGrafics(e.Graphics);
+            testLevel.PaintBackground();
+        }
+        private void MainMenuForm_Paint(object sender, PaintEventArgs e) {
+            testLevel.SetGrafics(e.Graphics);
+            testLevel.PaintInsides();
+        }
+        private void MainMenuForm_KeyDown(object sender, KeyEventArgs e) {
+            switch (e.KeyCode) {
+                case Keys.Escape:
+                    Close();
+                    break;
+                case Keys.A:
+                    isADown = true;
+                    break;
+                case Keys.D:
+                    isDDown = true;
+                    break;
+                case Keys.Space:
+                    isSpaceDown = true;
+                    break;
+            }
+        }
+        private void MainMenuForm_KeyUp(object sender, KeyEventArgs e) {
+            switch (e.KeyCode) {
+                case Keys.Escape:
+                    Close();
+                    break;
+                case Keys.A:
+                    isADown = false;
+                    testLevel.StopMoveLeft();
+                    break;
+                case Keys.D:
+                    isDDown = false;
+                    testLevel.StopMoveReight();
+                    break;
+                case Keys.Space:
+                    isSpaceDown = false;
+                    break;
+            }
         }
     }
 }
