@@ -4,6 +4,42 @@ namespace Night_Warrior.Entitys {
     abstract class Unit: AnimationEntity{
         protected int horizontalSpeed;
         protected double forceGravity;
+        protected bool isDrop = true;
+        protected bool isStand = false;
+        protected bool canMoveLeft = true;
+        protected bool canMoveReight = true;
+        public bool IsDrop {
+            get {
+                return isDrop;
+            }
+            set {
+                isDrop = value;
+            }
+        }
+        public bool IsStand {
+            get {
+                return isStand;
+            }
+            set {
+                isStand = value;
+            }
+        }
+        public bool CanMoveLeft {
+            get {
+                return canMoveLeft;
+            }
+            set {
+                canMoveLeft = value;
+            }
+        }
+        public bool CanMoveReight {
+            get {
+                return canMoveReight;
+            }
+            set {
+                canMoveReight = value;
+            }
+        }
         public int HorizontalSpeed {
             get {
                 return horizontalSpeed;
@@ -26,6 +62,10 @@ namespace Night_Warrior.Entitys {
         }
         public void Drop() {
             y += forceGravity;
+            SetHitBox(0, 0, Size);
+        }
+        public void CorrectY(double y) {
+            this.y = 1080 - y - size.Height;
             SetHitBox(0, 0, Size);
         }
     }

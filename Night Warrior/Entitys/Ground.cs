@@ -27,7 +27,7 @@ namespace Night_Warrior.Entitys {
         public Point GetCenterHitbox() {
             return new Point(HitBox.X+HitBox.Width/2, HitBox.Y + HitBox.Height / 2);
         }
-        public void MovingInScene(int hS, int vS) {
+        public void MovingInScene(double hS, double vS) {
             x += hS;
             y += vS;
             SetHitBox(0, 0, new Size(hitBox.Width, hitBox.Height));

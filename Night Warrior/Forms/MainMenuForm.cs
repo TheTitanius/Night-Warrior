@@ -30,7 +30,7 @@ namespace Night_Warrior {
             testLevel.Examination();
         }
         public void Update(object sender, EventArgs e) {
-            testLevel.Drop();
+            testLevel.Update();
             if (isADown) {
                 testLevel.MoveLeft();
             }
@@ -38,7 +38,7 @@ namespace Night_Warrior {
                 testLevel.MoveReight();
             }
             if (isSpaceDown) {
-                testLevel.Jump();
+                Scene.Jump();
             }
             Invalidate();
         }
@@ -74,11 +74,11 @@ namespace Night_Warrior {
                     break;
                 case Keys.A:
                     isADown = false;
-                    testLevel.StopMoveLeft();
+                    Scene.StopMoveLeft();
                     break;
                 case Keys.D:
                     isDDown = false;
-                    testLevel.StopMoveReight();
+                    Scene.StopMoveReight();
                     break;
                 case Keys.Space:
                     isSpaceDown = false;
