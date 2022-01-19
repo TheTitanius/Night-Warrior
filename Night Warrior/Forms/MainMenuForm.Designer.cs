@@ -28,6 +28,7 @@ namespace Night_Warrior {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainMenuForm));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.examinationTimer = new System.Windows.Forms.Timer(this.components);
+            this.dashTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // MainMenuForm
@@ -45,6 +46,7 @@ namespace Night_Warrior {
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainMenuForm_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainMenuForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainMenuForm_KeyUp);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainMenuForm_MouseDown);
             this.ResumeLayout(false);
 
         }
@@ -53,6 +55,7 @@ namespace Night_Warrior {
 
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer examinationTimer;
+        private System.Windows.Forms.Timer dashTimer;
     }
 }
 

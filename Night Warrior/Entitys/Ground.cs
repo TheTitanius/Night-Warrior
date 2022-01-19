@@ -11,7 +11,6 @@ namespace Night_Warrior.Entitys {
                 hitBox = value;
             }
         }
-        public Ground(int x, int y, string imagePath, Size size, Graphics graphics) : base(x, y, imagePath, size, graphics) { }
         public Ground(int x, int y, string imagePath, Size size) : base(x, y, imagePath, size) { }
         public Ground(int x, int y, string imagePath, Size size, Rectangle region): base(x, y, imagePath, size, region) { }
         public Ground(int x, int y, string imagePath, Size size, Rectangle region, Rectangle hitBox) : base(x, y, imagePath, size, region) {
