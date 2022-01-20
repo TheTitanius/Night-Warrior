@@ -6,14 +6,21 @@ using System.Diagnostics;
 namespace Night_Warrior.Entitys {
     class Character: Unit {
         private const double MaxHorizontalSpeed = 22;
-        private const int MaxJumpSpeed = -18;
         private const double DashAcceleration = 2;
+        private const int MaxJumpSpeed = -18;
         private const int MaxHp = 5;
         private const int MaxFramesInvulnerability = 50;
+        private const int MaxAmountManna = 136;
+        private const int MaxFramesHealing = 30;
+
+        private bool haveSword = false;
+
+        private int amountManna = 0;
+        private int framesHealing;
 
         private bool isJump = false;
-        private bool isInvulnerability = false;
         private bool isDash = false;
+        private bool isHealing = false;
 
         private bool canJump = true;
         private bool canDash = true;
@@ -21,23 +28,22 @@ namespace Night_Warrior.Entitys {
 
         private double dashSpeed = 0;
         private double verticalSpeed = 0;
+
         private bool dashDirection;
         private bool decreaseSpeed = false;
         private bool correctY = false;
         private bool correctXR = false;
         private bool correctXL = true;
-        private int framesInvulnerability;
+        private bool movementInScene = true;
+
+        private int unplannedMovement = -1;
+        private int correctX = 0;
+
         private List<StaticEntity> healthContainers;
         private StaticEntity mannaContainer;
+        private StaticEntity manna;
         private StaticEntity impactwEffects;
-        public bool IsInvulnerability {
-            get {
-                return isInvulnerability;
-            }
-            set {
-                isInvulnerability = value;
-            }
-        }
+        private StaticEntity healingEffects;
         public bool CanCanDash {
             set {
                 canCanDash = value;
@@ -67,14 +73,7 @@ namespace Night_Warrior.Entitys {
                 isMoveLeft = value;
             }
         }
-        public bool IsMoveReight {
-            get {
-                return isMoveReight;
-            }
-            set {
-                isMoveReight = value;
-            }
-        }
+        public bool IsMoveReight;
         public double VerticalSpeed {
             get {
                 return verticalSpeed;
@@ -101,6 +100,27 @@ namespace Night_Warrior.Entitys {
                 return dashSpeed;
             }
         }
+        public int UnplannedMovement {
+            get {
+                return unplannedMovement;
+            }
+            set {
+                unplannedMovement = value;
+            }
+        }
+        public bool MovementInScene {
+            set {
+                movementInScene = value;
+            }
+        }
+        public bool HaveSword {
+            get {
+                return haveSword;
+            }
+            set {
+                haveSword = value;
+            }
+        }
         public Character(int x, int y, string imagePath, Size size, Rectangle region, int hS, int hitboxOffset) : base(x, y, imagePath, size, region, hS, hitboxOffset) {
             hp = MaxHp;
             healthContainers = new List<StaticEntity> {
@@ -111,7 +131,9 @@ namespace Night_Warrior.Entitys {
                 new StaticEntity(490, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
             };
             mannaContainer = new StaticEntity(20, 920, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 140), new Rectangle(0, 940, 140, 140));
-            impactwEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 120), new Rectangle(0, 240, 140, 120));
+            impactwEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 120), new Rectangle(0, 240, 140, 100));
+            manna = new StaticEntity(42, 922, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(136, 136), new Rectangle(140, 940, 136, 136));
+            healingEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(136, 136), new Rectangle(0, 340, 160, 160));
             damage = 1;
             MaxFramesAttack = 5;
         }
@@ -135,7 +157,7 @@ namespace Night_Warrior.Entitys {
             }
             isMoveVertical = false;
         }
-        protected override void RenderingAnimations() {
+        public override void RenderingAnimations() {
             IsMoveHorizontal();
             IsMoveVertical();
             int state = 0;
@@ -231,7 +253,7 @@ namespace Night_Warrior.Entitys {
                         region.Width = 120;
                         size.Width = 120;
                         if (!correctXR) {
-                            CorrectX(X - 40);
+                            correctX = - 40;
                             correctXR = true;
                         }
                         SetHitBox(55, 0, new Size(60, 120));
@@ -248,7 +270,7 @@ namespace Night_Warrior.Entitys {
                         region.Width = 120;
                         size.Width = 120;
                         if (correctXR) {
-                            CorrectX(X + 40);
+                            correctX = 0;
                             correctXR = false;
                         }
                         SetHitBox(15, 0, new Size(60, 120));
@@ -258,17 +280,17 @@ namespace Night_Warrior.Entitys {
                         region.Width = 120;
                         size.Width = 120;
                         if (correctXL) {
-                            CorrectX(X - 55);
+                            correctX = - 55;
                             correctXL = false;
                         }
                         SetHitBox(55, 0, new Size(60, 120));
-                        impactwEffects.SetXY(X + size.Width - 40 - impactwEffects.Size.Width, Y + size.Height - 10);
+                        impactwEffects.SetXY(X + size.Width - 40 - impactwEffects.Size.Width - size.Width/2, Y + size.Height - 10);
                     }
                 }
             } else {
                 isAttack = false;
                 if (!correctXL) {
-                    CorrectX(X + 55);
+                    correctX = 0;
                     correctXL = true;
                 }
             }
@@ -284,8 +306,12 @@ namespace Night_Warrior.Entitys {
             UpdatePoints();
         }
         public override void Draw() {
-            RenderingAnimations();
-            graphics.DrawImage(image, new Rectangle((int)x, (int)y, size.Width, size.Height), region, GraphicsUnit.Pixel);
+            if (isHealing) {
+                healingEffects.Graphics = graphics;
+                healingEffects.SetXY(x - 40, Y + healingEffects.Size.Height - 10);
+                healingEffects.Draw();
+            }
+            graphics.DrawImage(image, new Rectangle((int)x + correctX, (int)y, size.Width, size.Height), region, GraphicsUnit.Pixel);
 
             /*
             raphics.FillRectangle(new SolidBrush(Color.White), hitBox);
@@ -298,13 +324,13 @@ namespace Night_Warrior.Entitys {
             graphics.FillRectangle(new SolidBrush(Color.Red), new Rectangle(CD, new Size(2, 2)));
             graphics.FillRectangle(new SolidBrush(Color.Red), new Rectangle(DA, new Size(2, 2)));
             */
+
             for(int i = 0; i < hp; i++) {
                 healthContainers[i].IsActive = true;
             }
             for(int i = MaxHp-1; i >= hp; i--) {
                 healthContainers[i].IsActive = false;
             }
-            //Attack();
             if (isAttack) {
                 if (framesAttack < MaxFramesAttack / 2) {
                     impactwEffects.Graphics = graphics;
@@ -318,6 +344,10 @@ namespace Night_Warrior.Entitys {
             }
             mannaContainer.Graphics = graphics;
             mannaContainer.Draw();
+
+            manna.Graphics = graphics;
+            manna.ChangeImageForManna(amountManna);
+            manna.Draw();
             /*
             for (double y = bL; y < bU; y++) {
                 double a = 0.05;
@@ -512,6 +542,53 @@ namespace Night_Warrior.Entitys {
         public override void TakingDamage(int damage) {
             base.TakingDamage(damage);
             framesInvulnerability = MaxFramesInvulnerability;
+        }
+        protected override void Repulsion(bool enemyDirectionGazeHorizontal) {
+            if (enemyDirectionGazeHorizontal) {
+                if (movementInScene) {
+                    x += 40;
+                } else {
+                    unplannedMovement = 0;
+                }
+            } else {
+                if (movementInScene) {
+                    x -= 40;
+                } else {
+                    unplannedMovement = 1;
+                }
+            }
+            if (movementInScene) {
+                SetHitBox(0, 0, Size);
+            }
+        }
+        public void MannaReplenishment(int mannaFromHit) {
+            if(amountManna < MaxAmountManna) {
+                amountManna += mannaFromHit;
+            }
+        }
+        public void Healing() {
+            if(amountManna >= 68 && !isHealing) {
+                isHealing = true;
+                framesHealing = MaxFramesHealing;
+            }
+            if (isHealing) {
+                if(framesInvulnerability == MaxFramesInvulnerability) {
+                    StopHealing();
+                }
+                if(framesHealing > 0) {
+                    framesHealing --;
+                }else{
+                    if (hp < MaxHp) {
+                        hp++;
+                    }
+                    amountManna -= 68;
+                    isHealing = false;
+                }
+            }
+        }
+        public void StopHealing() {
+            isHealing = false;
+            framesHealing = 0;
         }
     }
 }

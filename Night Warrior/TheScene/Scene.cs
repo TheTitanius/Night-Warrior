@@ -15,7 +15,6 @@ namespace Night_Warrior.TheScene {
         protected Size levelSize;
         protected Rectangle visibleArea;
         protected double visibleAreaY;
-        //protected double visibleAreaX = 0;
         protected Graphics Graphics {
             set {
                 graphics = value;
@@ -23,7 +22,7 @@ namespace Night_Warrior.TheScene {
         }
         public void CameraMovement() {
             motionVertical = true;
-            if(character.X >= visibleArea.Width / 2 + 1){
+            if (character.X >= visibleArea.Width / 2 + 1) {
                 motionHorizontal = false;
                 character.CorrectX(visibleArea.Width / 2);
             }
@@ -65,13 +64,29 @@ namespace Night_Warrior.TheScene {
             } else {
                 motionVertical = false;
             }
+            character.MovementInScene = motionHorizontal;
+            if (character.UnplannedMovement != -1) {
+                int bias = 1000;
+                switch (character.UnplannedMovement) {
+                    case 0:
+                        bias = -40;
+                        break;
+                    case 1:
+                        bias = 40;
+                        break;
+                }
+                visibleArea.X += bias;
+                MovingInScene(bias, 0);
+
+                character.UnplannedMovement = -1;
+            }
             motionHorizontal = true;
             foreach (Enemy enemy in enemies) {
                 if (!motionVertical) {
                     enemy.IsStand = false;
                 }
             }
-            if(visibleArea.X > 0) {
+            if (visibleArea.X > 0) {
                 bool wasDash = false;
                 if (character.IsDash) {
                     wasDash = true;
@@ -83,10 +98,6 @@ namespace Night_Warrior.TheScene {
             }
         }
         public void Examination() {
-            //Перед вами алгоритм просчитывания взаимодействия хитбоксов 3000
-            //Я уже не понимаю как он работает
-            //Но он работает
-            //Надеюсь, ничего не сломается в процессе работы, ибо починить его я не смогу
             DifferentMovement();
             CameraMovement();
             character.UpdatePoints();
@@ -100,13 +111,16 @@ namespace Night_Warrior.TheScene {
                     character.CanDash = false;
                 }
             }
-            if(character.X < 0) {
+            if (character.X < 0) {
                 if (!character.DirectionGazeHorizontal && character.IsDash) {
                     character.StopDash();
                 }
                 character.CorrectX(2);
             }
             foreach (Ground ground in grounds) {
+                if (character.IsStand) {
+                    character.IsMoveReight = false;
+                }
                 if (character.HitBox.IntersectsWith(ground.HitBox)) {
                     int wayHitboxesInteract = character.GetWayHitboxesInteract(ground.HitBox);
                     //Debug.WriteLine(wayHitboxesInteract);
@@ -165,7 +179,7 @@ namespace Night_Warrior.TheScene {
                         character.StopDrop();
                     }
                 }
-                foreach(Enemy enemy in enemies) {
+                foreach (Enemy enemy in enemies) {
                     if (enemy.HitBox.IntersectsWith(ground.HitBox)) {
                         int wayHitboxesInteract = enemy.GetWayHitboxesInteract(ground.HitBox);
                         switch (wayHitboxesInteract) {
@@ -176,11 +190,11 @@ namespace Night_Warrior.TheScene {
                                 break;
                             default:
                                 enemy.IsStand = false;
-                                enemy.IsDrop = true;
+                                //enemy.IsDrop = true;
                                 break;
                         }
                     } else {
-                        enemy.IsDrop = true;
+                        //enemy.IsDrop = true;
                     }
                 }
             }
@@ -191,14 +205,17 @@ namespace Night_Warrior.TheScene {
             }
         }
         public void Update() {
+            character.RenderingAnimations();
             foreach (Enemy enemy in enemies) {
                 enemy.IIUpdate(character);
                 if (character.IsAttack) {
-                    character.Attack(enemy, 0.05, 60);
+                    if (character.Attack(enemy, 0.05, 60)) {
+                        character.MannaReplenishment(enemy.GetMannaFromHit);
+                    }
                 }
             }
         }
-        public void SetGrafics(Graphics g) {
+        public virtual void SetGrafics(Graphics g) {
             graphics = g;
             foreach (Ground ground in grounds) {
                 ground.Graphics = graphics;
@@ -212,14 +229,14 @@ namespace Night_Warrior.TheScene {
         public void PaintBackground() {
             background.Draw();
         }
-        public void PaintInsides() {
+        public virtual void PaintInsides() {
+            character.Draw();
             foreach (Ground ground in grounds) {
                 ground.Draw();
             }
             foreach (Enemy enemy in enemies) {
                 enemy.Draw();
             }
-            character.Draw();
         }
         public void MoveLeft() {
             if (visibleArea.X != 0 && character.X >= visibleArea.Width / 2) {
@@ -258,7 +275,7 @@ namespace Night_Warrior.TheScene {
         public void DifferentMovement() {
             if (character.Y >= visibleArea.Height / 2) {
                 motionVertical = false;
-            } else{
+            } else {
                 motionVertical = true;
             }
             if (character.X >= visibleArea.Width / 2) {
@@ -292,20 +309,35 @@ namespace Night_Warrior.TheScene {
         public void Dash() {
             if (!character.IsDash && character.CanDash) {
                 character.StartDash();
-            }  
+            }
         }
         public static void StopMoveLeft() {
-            character.IsMoveLeft = false;   
+            character.IsMoveLeft = false;
         }
         public static void StopMoveReight() {
             character.IsMoveReight = false;
         }
-        private void MovingInScene(double xSpeed, double ySpeed) {
+        public virtual void MovingInScene(double xSpeed, double ySpeed) {
             foreach (Ground ground in grounds) {
                 ground.MovingInScene(xSpeed, ySpeed);
             }
             foreach (Enemy enemy in enemies) {
                 enemy.MovingInScene(xSpeed, ySpeed);
+            }
+        }
+        public static void Healing() {
+            character.StopDash();
+            StopMoveLeft();
+            StopMoveReight();
+            character.Healing();
+        }
+        public static void StopHealing() {
+            character.StopHealing();
+        }
+        public abstract void LevelRestart();
+        public static void Attack() {
+            if (character.HaveSword) {
+                character.StartAttack();
             }
         }
     }

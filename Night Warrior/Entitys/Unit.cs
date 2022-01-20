@@ -19,11 +19,13 @@ namespace Night_Warrior.Entitys {
         protected bool isMoveLeft = false;
         protected bool isMoveReight = false;
         protected bool isAttack = false;
+        protected bool isInvulnerability = false;
 
         protected bool canMoveLeft = true;
         protected bool canMoveReight = true;
 
         public int framesAttack;
+        protected int framesInvulnerability;
 
         protected bool directionGazeHorizontal = true;
         protected int directionGazeVertical = 0;
@@ -98,6 +100,14 @@ namespace Night_Warrior.Entitys {
                 return isAttack;
             }
         }
+        public bool IsInvulnerability {
+            get {
+                return isInvulnerability;
+            }
+            set {
+                isInvulnerability = value;
+            }
+        }
         public Unit(int x, int y, string imagePath, Size size, Rectangle region, int hS, int hitboxOffset) : base(x, y, imagePath, size, region, hitboxOffset) {
             horizontalSpeed = hS;
         }
@@ -138,6 +148,14 @@ namespace Night_Warrior.Entitys {
         }
         public virtual void TakingDamage(int damage) {
             hp -= damage;
+        }
+        protected virtual void Repulsion(bool enemyDirectionGazeHorizontal) {
+            if (enemyDirectionGazeHorizontal) {
+                x += 40;
+            } else {
+                x -= 40;
+            }
+            SetHitBox(0, 0, Size);
         }
         public virtual void StartAttack() {
             if (!isAttack) {
@@ -191,29 +209,30 @@ namespace Night_Warrior.Entitys {
         public double vY = 0;
         public double bL = 0;
         public double bU = 0;
-        public void Attack(Unit unit, double a, double centreBias) {
+        public bool Attack(Unit unit, double a, double centreBias) {
             if (isAttack) {/*
                 double vX;
                 double vY = Y + size.Height / 2;*/
                 vY = Y + size.Height / 2;
                 double bias;
                 int directionFactor;
+                int additionalOffset = 0;
                 if (directionGazeHorizontal) {
                     vX = X + size.Width + centreBias;
                     a *= -1;
                     bias = 0;
                     directionFactor = 1;
                 } else {
-                    vX = X - centreBias;
+                    vX = X - centreBias - size.Width/2;
+                    additionalOffset = size.Width / 2;
                     a *= -1;
                     bias = size.Width;
                     directionFactor = - 1;
                 }
                 double b = -2 * a * (vY);
                 double c = vX - (a * Math.Pow(vY, 2)) - b * vY;
-                bL = ((-b) - Math.Sqrt(directionFactor * (Math.Pow(b, 2) - 4 * a * (c - X - bias)))) / (2 * a);
-                bU = ((-b) + Math.Sqrt(directionFactor * (Math.Pow(b, 2) - 4 * a * (c - X - bias)))) / (2 * a);
-                //Debug.WriteLine($"{bL}, {bU}");
+                bL = ((-b) - Math.Sqrt(directionFactor * (Math.Pow(b, 2) - 4 * a * (c - X - bias + additionalOffset)))) / (2 * a);
+                bU = ((-b) + Math.Sqrt(directionFactor * (Math.Pow(b, 2) - 4 * a * (c - X - bias + additionalOffset)))) / (2 * a);
                 if (bL > bU) {
                     double q = bL;
                     bL = bU;
@@ -238,12 +257,16 @@ namespace Night_Warrior.Entitys {
                             notInArea = false;
                         }
                         if (notInArea) {
-                            unit.TakingDamage(damage);
-                            return;
+                            if (!unit.IsInvulnerability) {
+                                unit.TakingDamage(damage);
+                                unit.Repulsion(directionGazeHorizontal);
+                                return true;
+                            }
                         }
                     }
                 }
             }
+            return false;
         }
     }
 }

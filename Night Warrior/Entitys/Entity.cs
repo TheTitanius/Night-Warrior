@@ -50,13 +50,6 @@ namespace Night_Warrior.Entitys {
                 region = value;
             }
         }
-        protected Entity(int x, int y, string imagePath, Size size,Graphics graphics) {
-            this.x = x;
-            this.y = 1080 - y - size.Height;
-            image = Image.FromFile(imagePath);
-            this.graphics = graphics;
-            this.size = size;
-        }
         protected Entity(int x, int y, string imagePath, Size size) {
             this.x = x;
             this.y = 1080 - y - size.Height;

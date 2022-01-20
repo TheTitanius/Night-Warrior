@@ -9,9 +9,11 @@ namespace Night_Warrior {
     public partial class MainMenuForm : Form {
         private bool isADown = false;
         private bool isDDown = false;
+        private bool isEDown = false;
         private bool isSpaceDown = false;
         private bool isSpaceUp = false;
-        private TestLevel testLevel;
+
+        private Scene testLevel;
         int i = 5;
         public MainMenuForm() {
             InitializeComponent();
@@ -40,10 +42,10 @@ namespace Night_Warrior {
         }
         public void Examination(object sender, EventArgs e) {
             testLevel.Examination();
-            if (Scene.character.HP <= 0) {
-                Close();
+            if (Scene.character.HP == 0) {
+                testLevel.LevelRestart();
             }/*
-            if(testLevel.enemies[0].framesAttack == 1) {
+            if(testLevel.enemies[0].stop && testLevel.enemies[0].framesAttack == 3) {
                 examinationTimer.Stop();
                 timer1.Stop();
                 dashTimer.Stop();
@@ -61,6 +63,11 @@ namespace Night_Warrior {
                 //isSpaceUp = true;
                 testLevel.Jump();
             }
+            if (isEDown) {
+                Scene.Healing();
+            } else {
+                Scene.StopHealing();
+            }
             Invalidate();
         }
         protected override void OnPaintBackground(PaintEventArgs e) {
@@ -71,14 +78,6 @@ namespace Night_Warrior {
         private void MainMenuForm_Paint(object sender, PaintEventArgs e) {
             testLevel.SetGrafics(e.Graphics);
             testLevel.PaintInsides();
-            if (Scene.character.IsAttack) {
-                i--;/*
-                if (i == 0) {
-                    examinationTimer.Stop();
-                    timer1.Stop();
-                    dashTimer.Stop();
-                }*/
-            }
         }
         private void MainMenuForm_KeyDown(object sender, KeyEventArgs e) {
             switch (e.KeyCode) {
@@ -93,6 +92,12 @@ namespace Night_Warrior {
                     break;
                 case Keys.Space:
                     isSpaceDown = true;
+                    break;
+                case Keys.E:
+                    isEDown = true;
+                    break;
+                case Keys.S:
+                    TestLevel.InteractionWithDeadEnemy();
                     break;
             }
         }
@@ -113,6 +118,9 @@ namespace Night_Warrior {
                     isSpaceDown = false;
                     isSpaceUp = false;
                     break;
+                case Keys.E:
+                    isEDown = false;
+                    break;
             }
         }
         private void MainMenuForm_MouseDown(object sender, MouseEventArgs e) {
@@ -121,7 +129,7 @@ namespace Night_Warrior {
                     testLevel.Dash();
                     break;
                 case MouseButtons.Left:
-                    Scene.character.StartAttack();
+                    Scene.Attack();
                     break;
             }
         }

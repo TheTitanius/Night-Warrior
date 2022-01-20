@@ -23,6 +23,6 @@ namespace Night_Warrior.Entitys {
         public Point GetCenterHitbox() {
             return new Point(HitBox.X + HitBox.Width / 2, HitBox.Y + HitBox.Height / 2);
         }
-        protected abstract void RenderingAnimations();
+        public abstract void RenderingAnimations();
     }
 }

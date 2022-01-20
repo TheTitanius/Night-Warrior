@@ -20,12 +20,12 @@ namespace Night_Warrior.Entitys {
                 isActive = value;
             }
         }
-        public StaticEntity(int x, int y, string imagePath, Size size, Graphics graphics) : base(x, y, imagePath, size, graphics) {}
-        public StaticEntity(int x, int y, string imagePath, Size size) : base(x, y,  imagePath, size) {
-            this.size = size;
+        public Rectangle Size {
+            get {
+                return new Rectangle(new Point((int)x, (int)y), size);
+            }
         }
-        public StaticEntity(int x, int y, string imagePath, Size size, Graphics graphics, Point point): base(x, y, imagePath, size, graphics) {
-            this.point = point;
+        public StaticEntity(int x, int y, string imagePath, Size size) : base(x, y,  imagePath, size) {
             this.size = size;
         }
         public StaticEntity(int x, int y, string imagePath, Size size, Rectangle region) : base(x, y, imagePath, size, region) {
@@ -52,9 +52,19 @@ namespace Night_Warrior.Entitys {
                 region.X = x;
             }
         }
+        public void ChangeImageForManna(int amountManna) {
+            region.Y = 940 + (136 - amountManna);
+            region.Height = amountManna;
+            size.Height = amountManna;
+            y = 1080 - (922) - size.Height;
+        }
         public void SetXY(double x, double y) {
             this.x = x;
             this.y = 1080 - y;
+        }
+        public void MovingInScene(double hS, double vS) {
+            x += hS;
+            y += vS;
         }
     }
 }
