@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Night_Warrior.TheScene;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Night_Warrior {
@@ -41,7 +42,12 @@ namespace Night_Warrior {
             testLevel.Examination();
             if (Scene.character.HP <= 0) {
                 Close();
-            }
+            }/*
+            if(testLevel.enemies[0].framesAttack == 1) {
+                examinationTimer.Stop();
+                timer1.Stop();
+                dashTimer.Stop();
+            }*/
         }
         public void Update(object sender, EventArgs e) {
             testLevel.Update();

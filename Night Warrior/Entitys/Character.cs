@@ -29,12 +29,7 @@ namespace Night_Warrior.Entitys {
         private int framesInvulnerability;
         private List<StaticEntity> healthContainers;
         private StaticEntity mannaContainer;
-        private StaticEntity impactWEffects;
-        public bool IsAttack {
-            get {
-                return isAttack;
-            }
-        }
+        private StaticEntity impactwEffects;
         public bool IsInvulnerability {
             get {
                 return isInvulnerability;
@@ -116,7 +111,7 @@ namespace Night_Warrior.Entitys {
                 new StaticEntity(490, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
             };
             mannaContainer = new StaticEntity(20, 920, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 140), new Rectangle(0, 940, 140, 140));
-            impactWEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 120), new Rectangle(0, 240, 140, 120));
+            impactwEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 120), new Rectangle(0, 240, 140, 120));
             damage = 1;
             MaxFramesAttack = 5;
         }
@@ -247,7 +242,7 @@ namespace Night_Warrior.Entitys {
                         SetHitBox(5, 0, new Size(60, 120));
                     }
                 } else {
-                    impactWEffects.ChangeImageForImpactWEffects(directionGazeHorizontal);
+                    impactwEffects.ChangeImageForImpactWEffects(directionGazeHorizontal, 140);
                     if (directionGazeHorizontal) {
                         region.X = 760;
                         region.Width = 120;
@@ -257,7 +252,7 @@ namespace Night_Warrior.Entitys {
                             correctXR = false;
                         }
                         SetHitBox(15, 0, new Size(60, 120));
-                        impactWEffects.SetXY(X + size.Width + 60 - impactWEffects.Size.Width, Y + size.Height - 10);
+                        impactwEffects.SetXY(X + size.Width + 60 - impactwEffects.Size.Width, Y + size.Height - 10);
                     } else {
                         region.X = 880;
                         region.Width = 120;
@@ -267,7 +262,7 @@ namespace Night_Warrior.Entitys {
                             correctXL = false;
                         }
                         SetHitBox(55, 0, new Size(60, 120));
-                        impactWEffects.SetXY(X + size.Width - 40 - impactWEffects.Size.Width, Y + size.Height - 10);
+                        impactwEffects.SetXY(X + size.Width - 40 - impactwEffects.Size.Width, Y + size.Height - 10);
                     }
                 }
             } else {
@@ -312,8 +307,8 @@ namespace Night_Warrior.Entitys {
             //Attack();
             if (isAttack) {
                 if (framesAttack < MaxFramesAttack / 2) {
-                    impactWEffects.Graphics = graphics;
-                    impactWEffects.Draw();
+                    impactwEffects.Graphics = graphics;
+                    impactwEffects.Draw();
                 }
             }
             foreach(StaticEntity healthContainer in healthContainers) {
@@ -323,6 +318,19 @@ namespace Night_Warrior.Entitys {
             }
             mannaContainer.Graphics = graphics;
             mannaContainer.Draw();
+            /*
+            for (double y = bL; y < bU; y++) {
+                double a = 0.05;
+                if (directionGazeHorizontal) {
+                    a *= -1;
+                } else {
+                    a *= 1;
+                }
+                double b = -2 * a * (vY);
+                double c = vX - (a * Math.Pow(vY, 2)) - b * vY;
+                double x = a * Math.Pow(y, 2) + b * y + c;
+                graphics.FillRectangle(new SolidBrush(Color.Red), (int)x, 1080 - (int)y, 2, 2);
+            }*/
         }
         public void StartJump(bool motionVertical) {
             verticalSpeed = MaxJumpSpeed;
@@ -504,60 +512,6 @@ namespace Night_Warrior.Entitys {
         public override void TakingDamage(int damage) {
             base.TakingDamage(damage);
             framesInvulnerability = MaxFramesInvulnerability;
-        }
-        public void Attack(Enemy enemy) {
-            if (isAttack) {
-                double vX;
-                double vY= Y + size.Height / 2;
-                double a;
-                double bias;
-                if (directionGazeHorizontal) {
-                    vX = X + size.Width + 60;
-                    a = -0.05;
-                    bias = 70;
-                } else {
-                    vX = X - size.Width + 60;
-                    a = 0.05;
-                    bias = 0;
-                }
-                double b = -2 * a * (vY);
-                double c = vX - (a * Math.Pow(vY, 2)) - b * vY;
-                double bL = ((-b) - Math.Sqrt(Math.Pow(b, 2) - 4 * a * (c - X - bias))) / (2 * a);
-                double bU = ((-b) + Math.Sqrt(Math.Pow(b, 2) - 4 * a * (c - X - bias))) / (2 * a);
-                if (bL > bU) {
-                    double q = bL;
-                    bL = bU;
-                    bU = q;
-                }/*
-                for(double y = bL; y < bU; y++) {
-                    double x = a * Math.Pow(y, 2) + b * y + c;
-                    graphics.FillRectangle(new SolidBrush(Color.Red), new Rectangle((int)x, 1080-(int)y, 2, 2));
-                }*/
-                List<Point> points = enemy.GetPoints();
-                foreach (Point point in points) {
-                    if (1080 - point.Y > bL && 1080 - point.Y < bU) {
-                        bool notInArea = true;
-                        if (directionGazeHorizontal) {
-                            if (point.X > vX || point.X < X + bias) {
-                                notInArea = false;
-                            }
-                        } else {
-                            if (point.X < vX || point.X > X + bias) {
-                                notInArea = false;
-                            }
-                        }
-                        double lY = 1080 - point.Y;
-                        double x = a * Math.Pow(lY, 2) + b * lY + c;
-                        if (point.X < x) {
-                            notInArea = false;
-                        }
-                        if (notInArea) {
-                            enemy.TakingDamage(damage);
-                            return;
-                        }
-                    }
-                }
-            }
         }
     }
 }

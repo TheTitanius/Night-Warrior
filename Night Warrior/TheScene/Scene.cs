@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace Night_Warrior.TheScene {
     abstract class Scene {
         protected List<Ground> grounds;
-        protected List<Enemy> enemies;
+        public List<Enemy> enemies;
         protected StaticEntity background;
         public static Character character;
         protected Graphics graphics;
@@ -167,12 +167,16 @@ namespace Night_Warrior.TheScene {
                 }
                 foreach(Enemy enemy in enemies) {
                     if (enemy.HitBox.IntersectsWith(ground.HitBox)) {
-                        int wayHitboxesInteract = character.GetWayHitboxesInteract(ground.HitBox);
+                        int wayHitboxesInteract = enemy.GetWayHitboxesInteract(ground.HitBox);
                         switch (wayHitboxesInteract) {
                             case 0:
                                 enemy.IsDrop = false;
                                 enemy.IsStand = true;
                                 enemy.CorrectY(ground.Y + ground.HitBox.Height - 1);
+                                break;
+                            default:
+                                enemy.IsStand = false;
+                                enemy.IsDrop = true;
                                 break;
                         }
                     } else {
@@ -180,12 +184,17 @@ namespace Night_Warrior.TheScene {
                     }
                 }
             }
+            foreach (Enemy enemy in enemies) {
+                if (enemy.IsAttack) {
+                    enemy.IsStand = true;
+                }
+            }
         }
         public void Update() {
             foreach (Enemy enemy in enemies) {
                 enemy.IIUpdate(character);
                 if (character.IsAttack) {
-                    character.Attack(enemy);
+                    character.Attack(enemy, 0.05, 60);
                 }
             }
         }

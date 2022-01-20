@@ -45,11 +45,11 @@ namespace Night_Warrior.Entitys {
                 region.X = 60;
             }
         }
-        public void ChangeImageForImpactWEffects(bool directionGazeHorizontal) {
+        public void ChangeImageForImpactWEffects(bool directionGazeHorizontal, int x) {
             if (directionGazeHorizontal) {
                 region.X = 0;
             } else {
-                region.X = 140;
+                region.X = x;
             }
         }
         public void SetXY(double x, double y) {

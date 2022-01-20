@@ -23,7 +23,7 @@ namespace Night_Warrior.TheScene {
             };
             teastLevel.background = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\night_city.png", new Size(1920, 1080), new Rectangle(0, 0, 1920, 1080));
             teastLevel.enemies = new List<Enemy> {
-                new Enemy(1500, 29, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\enemy.png", new Size(100, 160), new Rectangle(0, 0, 100, 160), 4, 5, 1, 0),
+                new Enemy(1000, 29, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\enemy.png", new Size(100, 160), new Rectangle(0, 0, 100, 160), 4, 5, 1, 0),
             };
             character = new Character(0, 100, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 120), new Rectangle(0, 0, 60, 120), 10, 10);
         }

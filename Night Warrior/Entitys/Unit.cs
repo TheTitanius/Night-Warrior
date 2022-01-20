@@ -1,5 +1,7 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Night_Warrior.Entitys {
     abstract class Unit: AnimationEntity{
@@ -21,7 +23,7 @@ namespace Night_Warrior.Entitys {
         protected bool canMoveLeft = true;
         protected bool canMoveReight = true;
 
-        protected int framesAttack;
+        public int framesAttack;
 
         protected bool directionGazeHorizontal = true;
         protected int directionGazeVertical = 0;
@@ -91,6 +93,11 @@ namespace Night_Warrior.Entitys {
                 directionGazeHorizontal = value;
             }
         }
+        public bool IsAttack {
+            get {
+                return isAttack;
+            }
+        }
         public Unit(int x, int y, string imagePath, Size size, Rectangle region, int hS, int hitboxOffset) : base(x, y, imagePath, size, region, hitboxOffset) {
             horizontalSpeed = hS;
         }
@@ -105,8 +112,8 @@ namespace Night_Warrior.Entitys {
             canMoveReight = true;
             x -= horizontalSpeed;
             directionGazeHorizontal = false;
-            SetHitBox(0, 0, Size);
             isMoveHorizontal = true;
+            SetHitBox(0, 0, Size);
         }
         public void MoveReight() {
             canMoveLeft = true;
@@ -176,6 +183,67 @@ namespace Night_Warrior.Entitys {
                 return true;
             }
             return false;
+        }
+        public List<Point> GetPoints() {
+            return new List<Point> { A, B, C, D, AB, BC, CD, DA };
+        }
+        public double vX = 0;
+        public double vY = 0;
+        public double bL = 0;
+        public double bU = 0;
+        public void Attack(Unit unit, double a, double centreBias) {
+            if (isAttack) {/*
+                double vX;
+                double vY = Y + size.Height / 2;*/
+                vY = Y + size.Height / 2;
+                double bias;
+                int directionFactor;
+                if (directionGazeHorizontal) {
+                    vX = X + size.Width + centreBias;
+                    a *= -1;
+                    bias = 0;
+                    directionFactor = 1;
+                } else {
+                    vX = X - centreBias;
+                    a *= -1;
+                    bias = size.Width;
+                    directionFactor = - 1;
+                }
+                double b = -2 * a * (vY);
+                double c = vX - (a * Math.Pow(vY, 2)) - b * vY;
+                bL = ((-b) - Math.Sqrt(directionFactor * (Math.Pow(b, 2) - 4 * a * (c - X - bias)))) / (2 * a);
+                bU = ((-b) + Math.Sqrt(directionFactor * (Math.Pow(b, 2) - 4 * a * (c - X - bias)))) / (2 * a);
+                //Debug.WriteLine($"{bL}, {bU}");
+                if (bL > bU) {
+                    double q = bL;
+                    bL = bU;
+                    bU = q;
+                }
+                List<Point> points = unit.GetPoints();
+                foreach (Point point in points) {
+                    if (1080 - point.Y > bL && 1080 - point.Y < bU) {
+                        bool notInArea = true;
+                        if (directionGazeHorizontal) {
+                            if (point.X > vX || point.X < X + bias) {
+                                notInArea = false;
+                            }
+                        } else {
+                            if (point.X < vX || point.X > X + bias) {
+                                notInArea = false;
+                            }
+                        }
+                        double lY = 1080 - point.Y;
+                        double x = a * Math.Pow(lY, 2) + b * lY + c;
+                        if (point.X < x) {
+                            notInArea = false;
+                        }
+                        if (notInArea) {
+                            unit.TakingDamage(damage);
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 }
