@@ -124,16 +124,16 @@ namespace Night_Warrior.Entitys {
         public Character(int x, int y, string imagePath, Size size, Rectangle region, int hS, int hitboxOffset) : base(x, y, imagePath, size, region, hS, hitboxOffset) {
             hp = MaxHp;
             healthContainers = new List<StaticEntity> {
-                new StaticEntity(170, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
-                new StaticEntity(250, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
-                new StaticEntity(330, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
-                new StaticEntity(410, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
-                new StaticEntity(490, 1000, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
+                new StaticEntity(170, 1000, @"res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
+                new StaticEntity(250, 1000, @"res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
+                new StaticEntity(330, 1000, @"res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
+                new StaticEntity(410, 1000, @"res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
+                new StaticEntity(490, 1000, @"res\character.png", new Size(60, 60), new Rectangle(0, 860, 60, 60), true),
             };
-            mannaContainer = new StaticEntity(20, 920, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 140), new Rectangle(0, 940, 140, 140));
-            impactwEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(140, 120), new Rectangle(0, 240, 140, 100));
-            manna = new StaticEntity(42, 922, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(136, 136), new Rectangle(140, 940, 136, 136));
-            healingEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\character.png", new Size(136, 136), new Rectangle(0, 340, 160, 160));
+            mannaContainer = new StaticEntity(20, 920, @"res\character.png", new Size(140, 140), new Rectangle(0, 940, 140, 140));
+            impactwEffects = new StaticEntity(0, 0, @"res\character.png", new Size(140, 120), new Rectangle(0, 240, 140, 100));
+            manna = new StaticEntity(42, 922, @"res\character.png", new Size(136, 136), new Rectangle(140, 940, 136, 136));
+            healingEffects = new StaticEntity(0, 0, @"res\character.png", new Size(136, 136), new Rectangle(0, 340, 160, 160));
             damage = 1;
             MaxFramesAttack = 5;
         }

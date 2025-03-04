@@ -25,7 +25,7 @@ namespace Night_Warrior.Entitys {
             this.damage = damage;
             SetHitBox(0, 0, Size);
             MaxFramesAttack = 14;
-            impactwEffects = new StaticEntity(0, 0, @"D:\Projects\C#\CourseWork\Night Warrior\Night Warrior\res\enemy.png", new Size(160, 120), new Rectangle(0, 180, 160, 120));
+            impactwEffects = new StaticEntity(0, 0, @"res\enemy.png", new Size(160, 120), new Rectangle(0, 180, 160, 120));
         }
         public override void RenderingAnimations() {
             IsMoveHorizontal();
